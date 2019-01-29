@@ -27,22 +27,34 @@ export class AppComponent implements AfterViewInit {
         cookiepolicy: 'single_host_origin',
         scope: this.scope
       });
-      this.attachSignin(this.element.nativeElement.firstChild);
+      this.attachSignin(document.getElementById('g-signin2'));
     });
   }
 
   public attachSignin(element) {
+    console.log(element.id);
     this.auth2.attachClickHandler(element, {},
       (googleUser) => {
         let profile = googleUser.getBasicProfile();
         console.log('Token || ' + googleUser.getAuthResponse().id_token);
         console.log('ID: ' + profile.getId());
         console.log('Email: ' + profile.getEmail());
-        console.log(element);
-        element.textContent = profile.getEmail();
+        document.getElementById('display-email').textContent = profile.getEmail();
+        this.auth2.signOut().then(function () {
+          console.log('User signed out.');
+          
+        });
+        this.auth2.disconnect();
       }, function (error) {
         console.log(JSON.stringify(error, undefined, 2));
       });
+  }
+
+  public onSignout(){
+    console.log("Signout");
+    this.auth2.signOut().then(function () {
+      console.log('User signed out.');
+    });
   }
 
   constructor(private element: ElementRef) {
